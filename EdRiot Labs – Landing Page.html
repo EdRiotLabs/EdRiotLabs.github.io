@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EdRiot Labs – Tools that help kids learn faster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Noto+Nastaliq+Urdu:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f3f0ff;--surface:#ffffff;--ink:#1b1464;--muted:#5a5590;--line:#d9d3fb;
+  --coral:#ff4f74;--sun:#ffc83d;--mint:#1fc99a;--violet:#6a4cff;--ghost:rgba(106,76,255,.16);--pen:#1b1464;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14102e;--surface:#1f1946;--ink:#f1eeff;--muted:#a9a3d9;--line:#322a6b;--ghost:rgba(255,200,61,.16);--pen:#ffc83d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14102e;--surface:#1f1946;--ink:#f1eeff;--muted:#a9a3d9;--line:#322a6b;--ghost:rgba(255,200,61,.16);--pen:#ffc83d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--coral);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+/* background blobs */
+.blob{position:fixed;z-index:-1;border-radius:50%;filter:blur(90px);opacity:.45;pointer-events:none}
+.b1{width:420px;height:420px;background:var(--violet);top:-120px;right:-100px}
+.b2{width:340px;height:340px;background:var(--coral);bottom:-100px;left:-100px;opacity:.28}
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;margin:14px auto 0;max-width:1112px;width:calc(100% - 32px);
+  display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 20px;border-radius:999px;
+  background:color-mix(in srgb,var(--surface) 72%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line)}
+.logo{font-weight:800;font-size:1.15rem;letter-spacing:-.02em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo i{width:14px;height:14px;border-radius:5px 50% 5px 50%;background:linear-gradient(135deg,var(--coral),var(--sun));display:block}
+.nav-r{display:flex;gap:6px;align-items:center}
+.nav-r a.l{padding:8px 14px;text-decoration:none;font-size:.95rem;color:var(--muted);border-radius:999px}
+.nav-r a.l:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font:inherit;font-weight:600;text-decoration:none;border:0;cursor:pointer;
+  background:var(--ink);color:var(--bg);transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px -8px var(--ink)}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.alt:hover{box-shadow:none;background:var(--surface)}
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:72px 0 56px}
+h1{font-size:clamp(2.6rem,6.4vw,5.2rem);line-height:.98;letter-spacing:-.04em;font-weight:800;margin:0 0 22px;font-variation-settings:"opsz" 96}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--coral),var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.05em}
+.lead{font-size:1.2rem;color:var(--muted);max-width:30em;margin:0 0 30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.pad{background:var(--surface);border:1px solid var(--line);border-radius:36px;padding:18px;box-shadow:0 30px 60px -30px rgba(70,40,200,.45);transform:rotate(1.6deg)}
+.pad-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.chips{display:flex;gap:6px}
+.chip{width:44px;height:44px;border-radius:14px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-family:"Noto Nastaliq Urdu",serif;font-size:1.3rem;cursor:pointer;line-height:1;padding:0}
+.chip[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}
+.clear{font:inherit;font-size:.9rem;background:none;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;padding:8px}
+canvas{display:block;width:100%;aspect-ratio:1/1;border-radius:24px;background:var(--bg);touch-action:none;cursor:crosshair}
+.pad p{margin:12px 6px 2px;font-size:.9rem;color:var(--muted)}
+/* bento */
+h2{font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.03em;line-height:1.05;margin:0 0 28px;font-weight:800}
+.bento{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{position:relative;border-radius:32px;padding:34px;min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;text-decoration:none;color:#1b1464;transition:transform .3s}
+.card:hover{transform:translateY(-6px) rotate(-.4deg)}
+.card.u{background:var(--sun)}
+.card.a{background:var(--mint)}
+.glyph{position:absolute;top:-10px;right:18px;font-size:11rem;line-height:1.3;opacity:.28;font-family:"Noto Nastaliq Urdu",serif;pointer-events:none}
+.card h3{font-size:2rem;margin:0 0 8px;letter-spacing:-.03em;line-height:1.05}
+.card p{margin:0 0 18px;max-width:26em;font-size:1.05rem}
+.tag{align-self:flex-start;background:#1b1464;color:#fff;border-radius:999px;padding:6px 14px;font-size:.85rem;font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.go{width:48px;height:48px;border-radius:50%;background:#1b1464;color:#fff;display:grid;place-items:center;font-size:1.3rem;transition:transform .3s}
+.card:hover .go{transform:rotate(-45deg)}
+/* focus */
+.focus{padding:96px 0 40px}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pillar{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:28px}
+.pillar b{display:block;font-size:1.3rem;letter-spacing:-.02em;margin-bottom:8px}
+.pillar span{color:var(--muted)}
+.dot{width:44px;height:44px;border-radius:14px;margin-bottom:18px}
+/* contact */
+.contact{margin:72px 0 40px;border-radius:40px;background:var(--ink);color:var(--bg);padding:56px 40px;display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
+.contact h2{margin:0 0 12px}
+.contact p{margin:0;opacity:.8;max-width:30em}
+.contact .btn{background:var(--sun);color:#1b1464;width:100%;justify-content:center;font-size:1.05rem}
+.contact .btn.alt{background:transparent;color:var(--bg);border-color:var(--bg);margin-top:10px}
+.contact .btn:hover{box-shadow:none}
+footer{padding:20px 0 48px;color:var(--muted);font-size:.95rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer a{text-decoration:none;font-weight:600;color:var(--ink)}
+.theme{width:40px;height:40px;border-radius:50%;border:0;background:var(--line);color:var(--ink);cursor:pointer;font-size:1rem}
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;padding-top:44px}.pad{transform:none}
+  .bento,.pillars,.contact{grid-template-columns:1fr}.nav-r a.l{display:none}.contact{padding:36px 24px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div>
+<nav aria-label="Main">
+  <a class="logo" href="#top"><i></i>EdRiot Labs</a>
+  <div class="nav-r">
+    <a class="l" href="#projects">Projects</a><a class="l" href="#focus">Our approach</a><a class="l" href="#contact">Contact</a>
+    <button class="theme" id="theme" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+  <section class="hero">
+    <div>
+      <h1>Kids learn faster when they <em>do</em> it.</h1>
+      <p class="lead">Free, fun browser tools that get children writing and reading Urdu and Arabic, with hands-on practice instead of passive lessons.</p>
+      <div class="cta">
+        <a class="btn" href="#projects">Try the tools</a>
+        <a class="btn alt" href="mailto:edriotlabs@gmail.com">Share feedback</a>
+      </div>
+    </div>
+    <div class="pad" aria-label="Try writing a letter">
+      <div class="pad-top">
+        <div class="chips" role="group" aria-label="Choose a letter">
+          <button class="chip" aria-pressed="true" data-l="ا">ا</button>
+          <button class="chip" aria-pressed="false" data-l="ب">ب</button>
+          <button class="chip" aria-pressed="false" data-l="پ">پ</button>
+          <button class="chip" aria-pressed="false" data-l="ٹ">ٹ</button>
+        </div>
+        <button class="clear" id="clear">Start over</button>
+      </div>
+      <canvas id="cv" aria-label="Drawing area. Trace the faint letter with your finger or mouse."></canvas>
+      <p>Trace the faint letter with your finger or mouse.</p>
+    </div>
+  </section>
+
+  <section id="projects" style="padding-top:56px">
+    <h2>Pick a project</h2>
+    <div class="bento">
+      <a class="card u" href="https://EdRiotLabs.github.io/urduwriting">
+        <span class="glyph" aria-hidden="true">ا</span>
+        <span class="tag">HTML</span><br>
+        <h3>Urdu Writing</h3>
+        <div class="row"><p>An interactive tool that helps kids practice and master Urdu writing.</p><span class="go" aria-hidden="true">→</span></div>
+      </a>
+      <a class="card a" href="https://EdRiotLabs.github.io/arabicReading">
+        <span class="glyph" aria-hidden="true">ب</span>
+        <span class="tag">JavaScript</span><br>
+        <h3>Arabic Reading</h3>
+        <div class="row"><p>A guided learning app that helps children learn to read Arabic.</p><span class="go" aria-hidden="true">→</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="focus" id="focus">
+    <h2>Built around how children learn</h2>
+    <div class="pillars">
+      <div class="pillar"><div class="dot" style="background:var(--coral)"></div><b>Kid-friendly design</b><span>Simple screens and big targets made for young learners.</span></div>
+      <div class="pillar"><div class="dot" style="background:var(--sun)"></div><b>Interactive practice</b><span>Hands-on reading and writing exercises, not passive lessons.</span></div>
+      <div class="pillar"><div class="dot" style="background:var(--mint)"></div><b>Open learning</b><span>Free tools that run in any browser, anywhere.</span></div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div>
+      <h2>Parent, teacher or developer? Join in.</h2>
+      <p>Send us ideas for new learning tools or feedback from your classroom. Developers can open an issue or submit a pull request in any of our repositories.</p>
+    </div>
+    <div>
+      <a class="btn" href="mailto:edriotlabs@gmail.com">edriotlabs@gmail.com</a>
+      <a class="btn alt" href="https://github.com/EdRiotLabs">Open GitHub</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>EdRiot Labs is a project of Riot &amp; Reason Studio, built in collaboration with Ex’orios.</span>
+    <a href="mailto:edriotlabs@gmail.com">Get in touch</a>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var cv=document.getElementById('cv'),ctx=cv.getContext('2d'),letter='ا',drawing=false,last=null,strokes=[];
+  function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+  function size(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);render()}
+  function render(){
+    var w=cv.clientWidth,h=cv.clientHeight;ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=css('--ghost');ctx.font='500 '+(w*0.82)+'px "Noto Nastaliq Urdu",serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(letter,w/2,h*0.5);
+    ctx.strokeStyle=css('--pen');ctx.lineWidth=Math.max(8,w*0.028);ctx.lineCap='round';ctx.lineJoin='round';
+    strokes.forEach(function(s){ctx.beginPath();s.forEach(function(p,i){i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)});if(s.length===1)ctx.lineTo(s[0].x+.1,s[0].y);ctx.stroke()});
+  }
+  function pt(e){var r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+  cv.addEventListener('pointerdown',function(e){drawing=true;cv.setPointerCapture(e.pointerId);strokes.push([pt(e)]);render()});
+  cv.addEventListener('pointermove',function(e){if(!drawing)return;strokes[strokes.length-1].push(pt(e));render()});
+  ['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drawing=false})});
+  document.getElementById('clear').onclick=function(){strokes=[];render()};
+  document.querySelectorAll('.chip').forEach(function(b){b.onclick=function(){
+    document.querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed','false')});
+    b.setAttribute('aria-pressed','true');letter=b.dataset.l;strokes=[];render()}});
+  window.addEventListener('resize',size);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){setTimeout(render,50)});
+  document.getElementById('theme').onclick=function(){
+    var el=document.documentElement,dark=el.dataset.theme?el.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    el.dataset.theme=dark?'light':'dark';setTimeout(render,30)};
+  size();
+})();
+</script>
+</body>
+</html>
